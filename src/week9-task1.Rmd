@@ -1,0 +1,95 @@
+---
+title: "Part 1 Multiple Linear Regression"
+author: "Satie Airame"
+date: "12/3/2020"
+output: html_document
+---
+
+```{r setup, include=FALSE, message = FALSE, warning = FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(tidyverse)
+library(palmerpenguins)
+library(GGally)
+library(stargazer)
+```
+
+```{r, message = FALSE, warning = FALSE}
+penguins %>% 
+  ggpairs()
+```
+
+
+```{r, message = FALSE, warning = FALSE}
+penguins %>% 
+  select(species, bill_length_mm:body_mass_g) %>% 
+  ggpairs(aes(color = species))
+```
+
+## Build a few different models
+
+```{r}
+lm1 <- lm(body_mass_g ~ flipper_length_mm + species, data = penguins)
+lm1
+```
+
+```{r}
+lm2 <- lm(body_mass_g ~ flipper_length_mm + species + sex, data = penguins)
+lm2
+```
+
+```{r}
+lm3 <- lm(body_mass_g ~ flipper_length_mm + species + sex + bill_length_mm, data = penguins)
+lm3
+```
+
+```{r}
+lm4 <- lm(body_mass_g ~ flipper_length_mm + species + sex + bill_length_mm + island, data = penguins)
+lm4
+```
+
+## TO DO Look at adjusted R2
+
+## Find the AIC value for each model
+
+```{r}
+AIC(lm1)
+AIC(lm2)
+AIC(lm3)
+AIC(lm4)
+```
+
+## Best model is lm3 because it has the lowest AIC. Adding Island did not benefit the quality of the model. But don't rely on AIC alone. Consider model carefully because it should make sense and be comprehensive.
+
+## TO DO Use plot function on each of these model names to look for normality.
+
+## Use stargazer package for a table with multiple model outputs
+
+```{r, results = 'asis'} 
+stargazer(lm1, lm3, lm4, type = "html") # use asis because table is already in HTML, stargazer delivers near publication quality tables
+```
+
+
+## Omitted variable bias
+
+```{r, message = FALSE, warning = FALSE}
+ggplot(data = penguins, aes(x = flipper_length_mm, y = bill_depth_mm))+
+  geom_point()+
+  geom_smooth(method = "lm")
+```
+
+
+```{r,message = FALSE, warning = FALSE}
+ggplot(data = penguins, aes(x = flipper_length_mm, y = bill_depth_mm, group = species))+
+  geom_point(aes(color = species))+
+  geom_smooth(method = "lm")
+```
+
+
+
+
+
+
+
+
+
+
