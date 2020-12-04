@@ -83,8 +83,7 @@ lizard_x2
 lizard_tidy <- broom::tidy(lizard_x2)
 ```
 
-
-There is a significant association (i.e., non-independence) between site and lizard tail breakage ($/chi$^2^('r lizard_tidy$parameter') = 'r lizard_tidy$statistic', *p* = 'r lizard_tidy$p.value').
+There is a significant association (i.e., non-independence) between site and lizard tail breakage ($/chi$^2^(`r lizard_tidy$parameter`) = `r round(lizard_tidy$statistic, 2)`, *p* = `r round(lizard_tidy$p.value, 3)`).
 
 
 
