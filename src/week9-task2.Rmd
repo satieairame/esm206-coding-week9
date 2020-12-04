@@ -22,8 +22,12 @@ lizards <- read_csv(here("data", "lizards.csv"))
 ## Counts of lizards by species
 
 ```{r}
-lizards %>% 
-  count(spp) %>% 
+lizards %>%
+```
+
+
+```{r}
+count(spp) %>% 
   arrange(-n)
 ```
 
@@ -40,6 +44,47 @@ utst <- lizards %>%
   filter(tail %in% c("W", "B"))
 ```
 
+## Find counts (using dplyr) and proportions of lizards with broken or whole tails at each site
+
+```{r}
+utst %>% 
+  count(site, tail)
+```
+## Use tabyl (in janitor) into table format, easier to understand and compare across groups.
+
+```{r}
+tail_counts <- utst %>% 
+  janitor::tabyl(site,tail)
+
+tail_proportions <- tail_counts %>% 
+  janitor::adorn_percentages() %>% # look at the percentages (not n)
+  janitor::adorn_pct_formatting(digits = 2) %>% # round to 2 sig digits
+  janitor::adorn_ns() # include actual counts
+```
+
+## Is there a significant difference between lizards with broken tails and whole tails at three different sites?
+
+## Convert to contingency table (convert site => rowname)
+
+Use 'column_to_rownames()'.
+
+```{r}
+lizard_ct <- tail_counts %>% 
+  column_to_rownames(var = "site") # use quotes to remove as a variable and use inputs as a rowname
+```
+ ## Run Chi-square
+ 
+ Are tail breakage and site indepedent?
+ 
+```{r}
+lizard_x2 <- chisq.test(lizard_ct)
+lizard_x2
+
+lizard_tidy <- broom::tidy(lizard_x2)
+```
+
+
+There is a significant association (i.e., non-independence) between site and lizard tail breakage ($/chi$^2^('r lizard_tidy$parameter') = 'r lizard_tidy$statistic', *p* = 'r lizard_tidy$p.value').
 
 
 
